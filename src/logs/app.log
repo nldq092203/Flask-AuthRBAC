@@ -1,0 +1,4 @@
+2025-02-16 10:01:38 INFO seed seed Starting database seeding...
+2025-02-16 10:01:38 INFO __init__ run_seeding Roles seeded successfully.
+2025-02-16 10:01:38 INFO __init__ run_seeding Admin user created.
+2025-02-16 10:01:38 INFO seed seed Seeding completed successfully.

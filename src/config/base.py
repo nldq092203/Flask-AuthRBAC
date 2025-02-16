@@ -29,3 +29,4 @@ class BaseConfig(ABC):
     OPENAPI_SWAGGER_UI_URL = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
     
     SEED_ADMIN = False
+    # LOG_DIR = ""

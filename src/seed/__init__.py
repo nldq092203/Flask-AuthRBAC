@@ -1,12 +1,16 @@
 from .seed_admin import create_admin
 from .seed_roles import insert_roles
-from src.config import get_config
+from flask import current_app
 
 def run_seeding():
     """Runs all seed functions based on config."""
-    config = get_config()
+    app = current_app._get_current_object()
+    logger = app.logger
+    config = app.config
 
-    insert_roles()  
+    insert_roles() 
+    logger.info("Roles seeded successfully.") 
 
-    if getattr(config, "SEED_ADMIN", False):
+    if config.get("SEED_ADMIN", False):
         create_admin()
+        logger.info("Admin user created.")
