@@ -30,3 +30,4 @@ class BaseConfig(ABC):
     
     SEED_ADMIN = False
     # LOG_DIR = ""
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "lnguye01")

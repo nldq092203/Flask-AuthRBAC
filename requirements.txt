@@ -5,3 +5,6 @@ sqlalchemy
 flask-sqlalchemy
 flask-migrate
 passlib
+flask-jwt-extended
+requests
+password-validator

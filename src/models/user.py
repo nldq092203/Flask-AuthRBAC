@@ -16,6 +16,7 @@ class UserModel(db.Model):
     roles: so.Mapped[list["RoleModel"]] = so.relationship(
         "RoleModel", back_populates="users", secondary="roles_users"
     )
+    is_active: so.Mapped[bool] = so.mapped_column(sa.Boolean(), default=False, server_default=sa.text("false"))
 
     @property
     def password(self):
@@ -27,5 +28,9 @@ class UserModel(db.Model):
         """Hash password before storing it."""
         self._password = pbkdf2_sha256.hash(raw_password)
 
+    def verify_password(self, raw_password: str) -> bool:
+        """Verify if the given password matches the stored hashed password."""
+        return pbkdf2_sha256.verify(raw_password, self._password)
+    
     def __repr__(self):
         return '<User {}>'.format(self.username)
