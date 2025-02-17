@@ -13,6 +13,9 @@ class UserSchema(Schema):
     roles = fields.List(fields.Nested(PlainRoleSchema()), dump_only=True)
     is_active = fields.Bool(dump_only=True)
 
+class UserRegisterSchema(UserSchema):
+    email = fields.Str(required=True)
+    
 class UserUpdateSchema(Schema):
     password = fields.Str(load_only=True)
     roles = fields.List(fields.Int(), load_only=True, validate=validate.Length(min=1))

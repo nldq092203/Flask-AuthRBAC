@@ -14,6 +14,7 @@ from src.common.errors import register_error_handlers
 from flask_jwt_extended import JWTManager
 
 from src.api import api_blp
+from src.modules.auth.services import mail
 
 def create_app(config=None):
     app = Flask(__name__)
@@ -31,6 +32,9 @@ def create_app(config=None):
     api = Api(app)
 
     jwt = JWTManager(app)
+
+    # Initialize Flask-Mail 
+    mail.init_app(app)
 
     # Register CLI commands
     register_commands(app)

@@ -1,7 +1,6 @@
 from src.extensions.database import db
 import sqlalchemy as sa
 import sqlalchemy.orm as so 
-from typing import Optional
 from passlib.hash import pbkdf2_sha256
 
 class UserModel(db.Model):
@@ -12,7 +11,7 @@ class UserModel(db.Model):
     username: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=False,
                                                 unique=True)
     _password: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=False)
-    email: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64), nullable=True, unique=True)
+    email: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=False, unique=True)
     roles: so.Mapped[list["RoleModel"]] = so.relationship(
         "RoleModel", back_populates="users", secondary="roles_users"
     )

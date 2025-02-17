@@ -1,17 +1,17 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
-from flask import current_app
+from flask import current_app, request, jsonify
 
 from src.extensions.database import db
 from sqlalchemy import select
 from src.models.user import UserModel
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from src.modules.auth.schemas import UserSchema
+from src.modules.auth.schemas import UserSchema, UserRegisterSchema
 from src.modules.auth.models import RoleModel
 
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required, get_jwt
-from src.common.utils import validate_password
+from src.modules.auth.services import validate_password, verify_activation_token, send_activation_email
 
 blp = Blueprint("Users", "users", description="Operations on users")
 
@@ -60,8 +60,8 @@ class TokenRefresh(MethodView):
 
 @blp.route("/register")
 class UserRegister(MethodView):
-    @blp.arguments(UserSchema)
-    @blp.response(201, UserSchema)
+    @blp.arguments(UserRegisterSchema)
+    @blp.response(201, UserRegisterSchema)
     def post(self, user_data):
         current_app.logger.info(f"User registration attempt: {user_data['username']}")
 
@@ -79,7 +79,7 @@ class UserRegister(MethodView):
         except ValueError as e:
             abort(400, message=str(e))        
 
-        user = UserModel(username=user_data["username"], is_active=False)
+        user = UserModel(username=user_data["username"], email=user_data["email"], is_active=False)
         user.password = user_data["password"]
         user.roles.append(default_role)
 
@@ -87,6 +87,9 @@ class UserRegister(MethodView):
             db.session.add(user)
             db.session.commit()
             current_app.logger.info(f"User created successfully: {user.username}")
+
+            send_activation_email(user.email)
+
             return user 
 
         except IntegrityError:
@@ -98,4 +101,47 @@ class UserRegister(MethodView):
             db.session.rollback()
             current_app.logger.error(f"Database error during registration: {str(e)}")
             abort(500, message="An internal server error occurred. Please try again later.")
+        
 
+
+@blp.route("/activation/<token>")
+class UserActivateAccount(MethodView):
+    def get(self, token):
+        email = verify_activation_token(token)
+        if email:
+            stm = select(UserModel).where(UserModel.email == email)
+            user = db.session.execute(stm).scalars().first()
+            if user:
+                user.is_active = True  
+                db.session.commit()
+                current_app.logger.error(f"Account for {email} activated successfully!")
+                return jsonify({"message": f"Account for {email} activated successfully!"}), 200
+            abort(404, message="User not found.")
+        abort(400, message="Invalid or expired token.")
+
+@blp.route("/resend_activation")
+class UserResendActivateAccount(MethodView):
+    def post(self):
+        """Resends an activation email if the user exists and is not already activated."""
+        data = request.get_json()
+        email = data.get("email")
+
+        if not email:
+            abort(400, message="Email is required.")
+
+        stm = select(UserModel).where(UserModel.email == email)
+        user = db.session.execute(stm).scalars().first()
+
+        if not user:
+            abort(404, message="User not found.")
+
+        if user.is_active:
+            abort(409, message="User is already activated.")
+
+        try:
+            send_activation_email(user.email)
+            current_app.logger.info(f"Activation email resent to: {user.email}")
+            return jsonify({"message": "Activation email resent successfully."}), 200
+        except Exception as e:
+            current_app.logger.error(f"Error resending activation email to {user.email}: {str(e)}")
+            abort(500, message="An error occurred while resending the activation email. Please try again later.")
