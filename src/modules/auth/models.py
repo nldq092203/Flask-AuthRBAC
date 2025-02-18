@@ -1,7 +1,7 @@
 from src.extensions.database import db
 import sqlalchemy as sa
 import sqlalchemy.orm as so 
-
+from datetime import datetime, timezone
 
 class Permission:
     """Defines permission bit flags for RBAC"""
@@ -47,3 +47,9 @@ class RoleUserModel(db.Model):
     role_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey("roles.id"), nullable=False)
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey("users.id"), nullable=False)
 
+
+class BlacklistedToken(db.Model):
+    __tablename__ = "blacklisted_tokens"
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    jti: so.Mapped[str] = so.mapped_column(sa.String(36), unique=True, nullable=False)
+    created_at: so.Mapped[datetime] = so.mapped_column(sa.DateTime, default=lambda: datetime.now(timezone.utc))

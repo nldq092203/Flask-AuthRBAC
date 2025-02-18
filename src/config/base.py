@@ -1,6 +1,6 @@
 import os
 from abc import ABC, abstractmethod
-
+from datetime import timedelta
 class BaseConfig(ABC):
     """Base configuration with default settings shared across environments."""
 
@@ -31,3 +31,9 @@ class BaseConfig(ABC):
     SEED_ADMIN = False
     # LOG_DIR = ""
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "lnguye01")
+
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=60)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
+
+    JWT_BLACKLIST_ENABLED = True  # Enable token revocation
+    JWT_BLACKLIST_TOKEN_CHECKS = ["access", "refresh"] 

@@ -9,7 +9,7 @@ from src.config import get_config
 from src.config.logging import configure_logger
 
 from src.commands import register_commands
-from src.common.errors import register_error_handlers
+from src.common.error_handlers import register_error_handlers, register_jwt_handlers
 
 from flask_jwt_extended import JWTManager
 
@@ -39,6 +39,7 @@ def create_app(config=None):
     # Register CLI commands
     register_commands(app)
     register_error_handlers(app)
+    register_jwt_handlers(jwt)
 
     app.register_blueprint(api_blp)
     

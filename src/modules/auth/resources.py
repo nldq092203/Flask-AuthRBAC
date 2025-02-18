@@ -7,13 +7,13 @@ from src.extensions.database import db
 from sqlalchemy import select
 from src.models.user import UserModel
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from src.modules.auth.schemas import UserSchema, UserRegisterSchema
+from src.modules.auth.schemas import UserSchema, UserRegisterSchema, ChangePasswordSchema, ResetPasswordSchema, SendEmailSchema
 from src.modules.auth.models import RoleModel
 
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required, get_jwt
-from src.modules.auth.services import validate_password, verify_activation_token, send_activation_email
+from src.modules.auth.services import validate_password, verify_token, send_activation_email, send_password_reset_email, add_token_to_blacklist
 
-blp = Blueprint("Users", "users", description="Operations on users")
+blp = Blueprint("auth", __name__, description="Authentication and User Management")
 
 @blp.route("/login")
 class UserLogin(MethodView):
@@ -104,10 +104,10 @@ class UserRegister(MethodView):
         
 
 
-@blp.route("/activation/<token>")
+@blp.route("/activation/<string:token>")
 class UserActivateAccount(MethodView):
     def get(self, token):
-        email = verify_activation_token(token)
+        email = verify_token(token)
         if email:
             stm = select(UserModel).where(UserModel.email == email)
             user = db.session.execute(stm).scalars().first()
@@ -121,15 +121,11 @@ class UserActivateAccount(MethodView):
 
 @blp.route("/resend_activation")
 class UserResendActivateAccount(MethodView):
-    def post(self):
+    @blp.arguments(SendEmailSchema)
+    def post(self, user_data):
         """Resends an activation email if the user exists and is not already activated."""
-        data = request.get_json()
-        email = data.get("email")
 
-        if not email:
-            abort(400, message="Email is required.")
-
-        stm = select(UserModel).where(UserModel.email == email)
+        stm = select(UserModel).where(UserModel.email == user_data["email"])
         user = db.session.execute(stm).scalars().first()
 
         if not user:
@@ -145,3 +141,110 @@ class UserResendActivateAccount(MethodView):
         except Exception as e:
             current_app.logger.error(f"Error resending activation email to {user.email}: {str(e)}")
             abort(500, message="An error occurred while resending the activation email. Please try again later.")
+
+
+@blp.route("/change_password")
+class ChangePassword(MethodView):
+    """Allows an authenticated user to change their password."""
+
+    @jwt_required(fresh=True)
+    @blp.arguments(ChangePasswordSchema)
+    def post(self, user_data):
+        """Change the user's password."""
+        user_id = get_jwt_identity()  # Get user ID from JWT token
+        current_app.logger.info(f"Password change attempt")
+
+        old_password = user_data["old_password"]
+        new_password = user_data["new_password"]
+
+        # Validate password format
+        try:
+            validate_password(new_password)
+        except ValueError as e:
+            abort(400, message=str(e))        
+
+        user = db.session.get(UserModel, user_id)
+
+        if not user:
+            abort(404, message="User not found.")
+
+        # Check if old password is correct
+        if not user.verify_password(old_password):
+            abort(401, message="Incorrect old password.")
+
+        # Validate new password strength
+        try:
+            validate_password(new_password)
+        except ValueError as e:
+            abort(400, message=str(e))
+
+        # Update password securely
+        user.password = new_password 
+        db.session.commit()
+
+        current_app.logger.info(f"User {user.username} changed their password.")
+
+        return jsonify({"message": "Password changed successfully."}), 200
+
+@blp.route("/forgot_password")
+class ForgotPassword(MethodView):
+    """Allows users to request a password reset token."""
+
+    @blp.arguments(SendEmailSchema)
+    def post(self, user_data):
+        """Return a password reset token for API-based reset."""
+        stm = select(UserModel).where(UserModel.email == user_data["email"])
+        user = db.session.execute(stm).scalars().first()
+
+        if not user:
+            abort(404, message="User not found.")
+
+        # Send the reset email
+        try:
+            send_password_reset_email(user.email)
+        except RuntimeError as e:
+            abort(500, message=str(e))
+
+        return jsonify({"message": "Password reset email sent successfully."}), 200
+
+@blp.route("/reset-password/<string:reset_token>")
+class ResetPassword(MethodView):
+    """Allows users to reset their password using a token."""
+
+    @blp.arguments(ResetPasswordSchema)
+    def post(self, user_data, reset_token):
+        """Reset the user's password using a valid token."""
+        new_password = user_data["new_password"]
+
+        # Verify the reset token
+        email = verify_token(reset_token)
+        if not email:
+            abort(400, message="Invalid or expired token.")
+
+
+        stm = select(UserModel).where(UserModel.email == email)
+        user = db.session.execute(stm).scalars().first()        
+        if not user:
+            abort(404, message="User not found.")
+
+        # Validate password strength
+        try:
+            validate_password(new_password)
+        except ValueError as e:
+            abort(400, message=str(e))
+
+        # Update password securely
+        user.password = new_password 
+        db.session.commit()
+
+        return jsonify({"message": "Password reset successfully."}), 200
+    
+
+@blp.route("/logout")
+class Logout(MethodView):
+    """Logs out a user by revoking their token."""
+
+    @jwt_required()
+    def post(self):
+        add_token_to_blacklist()
+        return jsonify({"message": "Successfully logged out."}), 200
