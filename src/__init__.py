@@ -2,7 +2,7 @@ import os
 
 from flask import Flask
 from flask_smorest import Api
-from src.extensions.database import db
+from src.extensions import db, jwt, mail
 from flask_migrate import Migrate
 
 from src.config import get_config
@@ -11,10 +11,7 @@ from src.config.logging import configure_logger, configure_sql_logger
 from src.commands import register_commands
 from src.common.error_handlers import register_error_handlers, register_jwt_handlers
 
-from flask_jwt_extended import JWTManager
-
-from src.api import api_blp
-from src.modules.auth.services import mail
+from src.modules.api import api_blp
 
 def create_app(config=None):
     app = Flask(__name__)
@@ -35,7 +32,7 @@ def create_app(config=None):
     migrate = Migrate(app, db)
     api = Api(app)
 
-    jwt = JWTManager(app)
+    jwt.init_app(app)
 
     # Initialize Flask-Mail 
     mail.init_app(app)

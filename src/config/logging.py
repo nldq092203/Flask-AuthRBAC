@@ -1,6 +1,5 @@
 import logging
 import logging.config
-import sys
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 import time

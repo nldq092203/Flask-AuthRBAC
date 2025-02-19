@@ -1,0 +1,25 @@
+2025-02-19 15:41:21 | INFO | BEGIN (implicit)
+2025-02-19 15:41:21 | INFO | SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.username = ?
+2025-02-19 15:41:21 | INFO | [generated in 0.00012s] ('admin',)
+2025-02-19 15:41:21 | INFO | SQL Query: SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.username = ? | Params: ('admin',) | Execution Time: 0.00087s
+2025-02-19 15:41:21 | INFO | SELECT roles.id AS roles_id, roles.name AS roles_name, roles."default" AS roles_default, roles.permissions AS roles_permissions 
+FROM roles, roles_users 
+WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id
+2025-02-19 15:41:21 | INFO | [generated in 0.00016s] (1,)
+2025-02-19 15:41:21 | INFO | SQL Query: SELECT roles.id AS roles_id, roles.name AS roles_name, roles."default" AS roles_default, roles.permissions AS roles_permissions 
+FROM roles, roles_users 
+WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id | Params: (1,) | Execution Time: 0.00022s
+2025-02-19 15:41:21 | INFO | ROLLBACK
+2025-02-19 16:15:40 | INFO | BEGIN (implicit)
+2025-02-19 16:15:40 | INFO | SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.username = ?
+2025-02-19 16:15:40 | INFO | [generated in 0.00030s] ('admin1',)
+2025-02-19 16:15:40 | INFO | SQL Query: SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.username = ? | Params: ('admin1',) | Execution Time: 0.00110s
+2025-02-19 16:15:40 | INFO | ROLLBACK

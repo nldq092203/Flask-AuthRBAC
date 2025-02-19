@@ -13,6 +13,7 @@ from src.modules.auth.models import RoleModel
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required, get_jwt
 from src.modules.auth.services import validate_password, verify_token, send_activation_email, send_password_reset_email, add_token_to_blacklist
 from src.common.decorators import role_required
+from http import HTTPStatus
 
 blp = Blueprint("auth", __name__, description="Authentication and User Management")
 
@@ -28,15 +29,15 @@ class UserLogin(MethodView):
 
         if not user:
             current_app.logger.warning(f"User '{user_data['username']}' not found.")
-            abort(401, message="Invalid credentials")
+            abort(HTTPStatus.UNAUTHORIZED, message="Invalid credentials")
 
         if not user.is_active:
-            abort(401, message="Account is not activated.")
+            abort(HTTPStatus.UNAUTHORIZED, message="Account is not activated.")
 
         if user.verify_password(user_data["password"]): 
             # Ensure user.id is a valid integer
             if not isinstance(user.id, int):
-                abort(500, message="Invalid user ID format")
+                abort(HTTPStatus.INTERNAL_SERVER_ERROR, message="Invalid user ID format")
 
             # Convert user.id to a string
             user_id = str(user.id)
@@ -53,7 +54,7 @@ class UserLogin(MethodView):
 
             return {"access_token": access_token, "refresh_token": refresh_token}
         current_app.logger.warning(f"Login failed for username: {user_data['username']}")
-        abort(401, message="Invalid credentials")
+        abort(HTTPStatus.UNAUTHORIZED, message="Invalid credentials")
 
 @blp.route("/refresh")
 class TokenRefresh(MethodView):
@@ -63,7 +64,7 @@ class TokenRefresh(MethodView):
         user = db.session.get(UserModel, current_user_id)
 
         if not user:
-            abort(401, message="User not found")
+            abort(HTTPStatus.NOT_FOUND, message="User not found.")
 
         roles = [role.name for role in user.roles] 
 
@@ -77,7 +78,7 @@ class TokenRefresh(MethodView):
 @blp.route("/register")
 class UserRegister(MethodView):
     @blp.arguments(UserRegisterSchema)
-    @blp.response(201, UserRegisterSchema)
+    @blp.response(HTTPStatus.CREATED, UserRegisterSchema)
     def post(self, user_data):
         current_app.logger.info(f"User registration attempt: {user_data['username']}")
 
@@ -87,13 +88,12 @@ class UserRegister(MethodView):
 
         if not default_role:
             current_app.logger.error("No default role found in database.")
-            abort(500, message="Internal error: No default role assigned.")
+            abort(HTTPStatus.INTERNAL_SERVER_ERROR, message="Internal error: No default role assigned.")
 
-        # Validate password format
         try:
             validate_password(user_data["password"])
         except ValueError as e:
-            abort(400, message=str(e))        
+            abort(HTTPStatus.BAD_REQUEST, message=str(e))        
 
         user = UserModel(username=user_data["username"], email=user_data["email"], is_active=False)
         user.password = user_data["password"]
@@ -111,12 +111,12 @@ class UserRegister(MethodView):
         except IntegrityError:
             db.session.rollback()
             current_app.logger.warning(f"Registration failed: Username '{user_data['username']}' already exists")
-            abort(409, message="A user with that username already exists.")
+            abort(HTTPStatus.CONFLICT, message="A user with that username already exists.")
 
         except SQLAlchemyError as e:
             db.session.rollback()
             current_app.logger.error(f"Database error during registration: {str(e)}")
-            abort(500, message="An internal server error occurred. Please try again later.")
+            abort(HTTPStatus.INTERNAL_SERVER_ERROR, message="An internal server error occurred. Please try again later.")
         
 
 
@@ -131,9 +131,9 @@ class UserActivateAccount(MethodView):
                 user.is_active = True  
                 db.session.commit()
                 current_app.logger.error(f"Account for {email} activated successfully!")
-                return jsonify({"message": f"Account for {email} activated successfully!"}), 200
-            abort(404, message="User not found.")
-        abort(400, message="Invalid or expired token.")
+                return jsonify({"message": f"Account for {email} activated successfully!"}), HTTPStatus.OK
+            abort(HTTPStatus.NOT_FOUND, message="User not found.")
+        abort(HTTPStatus.BAD_REQUEST, message="Invalid or expired token.")
 
 @blp.route("/resend_activation")
 class UserResendActivateAccount(MethodView):
@@ -145,18 +145,18 @@ class UserResendActivateAccount(MethodView):
         user = db.session.execute(stm).scalars().first()
 
         if not user:
-            abort(404, message="User not found.")
+            abort(HTTPStatus.NOT_FOUND, message="User not found.")
 
         if user.is_active:
-            abort(409, message="User is already activated.")
+            abort(HTTPStatus.CONFLICT, message="User is already activated.")
 
         try:
             send_activation_email(user.email)
             current_app.logger.info(f"Activation email resent to: {user.email}")
-            return jsonify({"message": "Activation email resent successfully."}), 200
+            return jsonify({"message": "Activation email resent successfully."}), HTTPStatus.OK
         except Exception as e:
             current_app.logger.error(f"Error resending activation email to {user.email}: {str(e)}")
-            abort(500, message="An error occurred while resending the activation email. Please try again later.")
+            abort(HTTPStatus.INTERNAL_SERVER_ERROR, message="An error occurred while resending the activation email. Please try again later.")
 
 
 @blp.route("/change_password")
@@ -174,34 +174,30 @@ class ChangePassword(MethodView):
         old_password = user_data["old_password"]
         new_password = user_data["new_password"]
 
-        # Validate password format
         try:
             validate_password(new_password)
         except ValueError as e:
-            abort(400, message=str(e))        
+            abort(HTTPStatus.BAD_REQUEST, message=str(e))        
 
         user = db.session.get(UserModel, user_id)
 
         if not user:
-            abort(404, message="User not found.")
+            abort(HTTPStatus.NOT_FOUND, message="User not found.")
 
-        # Check if old password is correct
         if not user.verify_password(old_password):
-            abort(401, message="Incorrect old password.")
+            abort(HTTPStatus.UNAUTHORIZED, message="Incorrect old password.")
 
-        # Validate new password strength
         try:
             validate_password(new_password)
         except ValueError as e:
-            abort(400, message=str(e))
+            abort(HTTPStatus.BAD_REQUEST, message=str(e))
 
-        # Update password securely
         user.password = new_password 
         db.session.commit()
 
         current_app.logger.info(f"User {user.username} changed their password.")
 
-        return jsonify({"message": "Password changed successfully."}), 200
+        return jsonify({"message": "Password changed successfully."}), HTTPStatus.OK
 
 @blp.route("/forgot_password")
 class ForgotPassword(MethodView):
@@ -214,15 +210,15 @@ class ForgotPassword(MethodView):
         user = db.session.execute(stm).scalars().first()
 
         if not user:
-            abort(404, message="User not found.")
+            abort(HTTPStatus.NOT_FOUND, message="User not found.")
 
         # Send the reset email
         try:
             send_password_reset_email(user.email)
         except RuntimeError as e:
-            abort(500, message=str(e))
+            abort(HTTPStatus.INTERNAL_SERVER_ERROR, message=str(e))
 
-        return jsonify({"message": "Password reset email sent successfully."}), 200
+        return jsonify({"message": "Password reset email sent successfully."}), HTTPStatus.OK
 
 @blp.route("/reset-password/<string:reset_token>")
 class ResetPassword(MethodView):
@@ -233,28 +229,24 @@ class ResetPassword(MethodView):
         """Reset the user's password using a valid token."""
         new_password = user_data["new_password"]
 
-        # Verify the reset token
         email = verify_token(reset_token)
         if not email:
-            abort(400, message="Invalid or expired token.")
+            abort(HTTPStatus.BAD_REQUEST, message="Invalid or expired token.")
 
 
         stm = select(UserModel).where(UserModel.email == email)
         user = db.session.execute(stm).scalars().first()        
         if not user:
-            abort(404, message="User not found.")
-
-        # Validate password strength
+            abort(HTTPStatus.NOT_FOUND, message="User not found.")
         try:
             validate_password(new_password)
         except ValueError as e:
-            abort(400, message=str(e))
+            abort(HTTPStatus.BAD_REQUEST, message=str(e))
 
-        # Update password securely
         user.password = new_password 
         db.session.commit()
 
-        return jsonify({"message": "Password reset successfully."}), 200
+        return jsonify({"message": "Password reset successfully."}), HTTPStatus.OK
     
 
 @blp.route("/logout")
@@ -264,4 +256,4 @@ class Logout(MethodView):
     @jwt_required(refresh=True)
     def post(self):
         add_token_to_blacklist()
-        return jsonify({"message": "Successfully logged out."}), 200
+        return jsonify({"message": "Successfully logged out."}), HTTPStatus.OK

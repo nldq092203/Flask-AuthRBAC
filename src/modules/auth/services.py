@@ -1,7 +1,8 @@
 from password_validator import PasswordValidator
 from itsdangerous import URLSafeTimedSerializer
 from flask import current_app
-from flask_mail import Mail, Message
+from flask_mail import Message
+from src.extensions.mail import mail
 from werkzeug.exceptions import InternalServerError
 
 
@@ -22,9 +23,6 @@ password_schema \
 def validate_password(password):
     if not password_schema.validate(password):
         raise ValueError("Password must be 8-128 characters long, contain uppercase, lowercase, a digit and a symbol.")
-    
-
-mail = Mail()
 
 def generate_activation_token(email):
     """Generate a secure activation token."""
