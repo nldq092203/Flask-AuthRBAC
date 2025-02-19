@@ -1,4 +1,4 @@
-from src.extensions.database import db
+from src.extensions import db
 from src.modules.auth.models import RoleModel, Permission
 
 def insert_roles():

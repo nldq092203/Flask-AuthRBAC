@@ -4,7 +4,7 @@ It automatically creates an admin user with **hardcoded credentials**.
 **DO NOT** use this in production as it poses a security risk.
 Instead, use the `flask createadmin` command for secure admin creation.
 """
-from src.extensions.database import db
+from src.extensions import db
 from src.models.user import UserModel
 from src.modules.auth.models import RoleModel
 

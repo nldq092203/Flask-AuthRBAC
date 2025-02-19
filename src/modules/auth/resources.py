@@ -3,7 +3,7 @@ from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
 from flask import current_app, request, jsonify
 
-from src.extensions.database import db
+from src.extensions import db
 from sqlalchemy import select
 from src.models.user import UserModel
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError

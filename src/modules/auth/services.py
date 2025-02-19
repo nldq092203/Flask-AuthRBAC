@@ -8,7 +8,7 @@ from werkzeug.exceptions import InternalServerError
 
 from src.modules.auth.models import BlacklistedToken
 from flask_jwt_extended import get_jwt
-from src.extensions.database import db
+from src.extensions import db
 from sqlalchemy import select
 
 password_schema = PasswordValidator()

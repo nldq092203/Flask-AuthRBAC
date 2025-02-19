@@ -1,6 +1,6 @@
 import click
 from flask import current_app
-from src.extensions.database import db
+from src.extensions import db
 from src.models.user import UserModel
 from src.modules.auth.models import RoleModel
 

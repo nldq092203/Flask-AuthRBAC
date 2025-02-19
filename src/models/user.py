@@ -1,4 +1,4 @@
-from src.extensions.database import db
+from src.extensions import db
 import sqlalchemy as sa
 import sqlalchemy.orm as so 
 from passlib.hash import pbkdf2_sha256
