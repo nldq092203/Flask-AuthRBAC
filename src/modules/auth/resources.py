@@ -12,6 +12,7 @@ from src.modules.auth.models import RoleModel
 
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required, get_jwt
 from src.modules.auth.services import validate_password, verify_token, send_activation_email, send_password_reset_email, add_token_to_blacklist
+from src.common.decorators import role_required
 
 blp = Blueprint("auth", __name__, description="Authentication and User Management")
 
@@ -42,7 +43,11 @@ class UserLogin(MethodView):
             current_app.logger.info(f"Login successful for user: {user.username}")
 
             # Create a JWT access token
-            access_token = create_access_token(identity=user_id, fresh=True)
+            access_token = create_access_token(
+                identity=user_id, 
+                fresh=True,
+                additional_claims={"roles":[role.name for role in user.roles]}
+                )
             # Create a refresh token
             refresh_token = create_refresh_token(identity=user_id)
 
@@ -54,8 +59,19 @@ class UserLogin(MethodView):
 class TokenRefresh(MethodView):
     @jwt_required(refresh=True)
     def post(self):
-        current_user = get_jwt_identity()
-        new_token = create_access_token(identity=current_user, fresh=False)
+        current_user_id = get_jwt_identity()
+        user = db.session.get(UserModel, current_user_id)
+
+        if not user:
+            abort(401, message="User not found")
+
+        roles = [role.name for role in user.roles] 
+
+        new_token = create_access_token(
+            identity=current_user_id,
+            fresh=False,
+            additional_claims={"roles": roles}
+        )
         return {"access_token": new_token}
 
 @blp.route("/register")
@@ -148,6 +164,7 @@ class ChangePassword(MethodView):
     """Allows an authenticated user to change their password."""
 
     @jwt_required(fresh=True)
+    
     @blp.arguments(ChangePasswordSchema)
     def post(self, user_data):
         """Change the user's password."""
@@ -244,7 +261,7 @@ class ResetPassword(MethodView):
 class Logout(MethodView):
     """Logs out a user by revoking their token."""
 
-    @jwt_required()
+    @jwt_required(refresh=True)
     def post(self):
         add_token_to_blacklist()
         return jsonify({"message": "Successfully logged out."}), 200

@@ -91,3 +91,5 @@ def is_token_blacklisted(jti):
     """Checks if a JWT token is in the blacklist."""
     stmt = select(BlacklistedToken).where(BlacklistedToken.jti == jti)
     return db.session.execute(stmt).scalar_one_or_none() is not None
+
+
