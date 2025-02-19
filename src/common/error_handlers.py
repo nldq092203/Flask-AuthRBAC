@@ -2,18 +2,20 @@ from flask import jsonify
 from werkzeug.exceptions import HTTPException, UnprocessableEntity
 from marshmallow.exceptions import ValidationError
 from src.modules.auth.services import is_token_blacklisted
+from src.constants.messages import (
+    VALIDATION_ERROR, INTERNAL_SERVER_ERROR, MISSING_FIELD_ERROR,
+    TOKEN_EXPIRED, TOKEN_NOT_FRESH,
+    INVALID_TOKEN, TOKEN_REVOKED, MISSING_TOKEN
+)
 
 def register_error_handlers(app):
-
     @app.errorhandler(UnprocessableEntity)
     def handle_validation_error(e):
         """Handles Marshmallow validation errors (422 Unprocessable Entity)."""
-
         validation_messages = getattr(e, "data", {}).get("messages", e.description)
-
         return jsonify({
-            "error": "Validation Error",
-            "message": validation_messages,  
+            "error": VALIDATION_ERROR,
+            "message": validation_messages,
             "status_code": 422
         }), 422
     
@@ -21,7 +23,6 @@ def register_error_handlers(app):
     def handle_http_exception(e):
         """Handles standard HTTP exceptions like 404, 401, etc."""
         response = e.get_response()
-        
         message = getattr(e, "data", {}).get("message", e.description)  
 
         response.data = jsonify({
@@ -37,20 +38,18 @@ def register_error_handlers(app):
         """Handles all uncaught exceptions."""
         return jsonify({
             "error": "Internal Server Error",
-            "message": "An unexpected error occurred."
+            "message": INTERNAL_SERVER_ERROR,
+            "status_code": 500
         }), 500
-
 
     @app.errorhandler(KeyError)
     def handle_key_error(error):
         """Handles KeyError when a required JSON field is missing."""
-        response = jsonify({
+        return jsonify({
             "error": "Bad Request",
-            "message": f"Missing required field: {str(error)}",
+            "message": MISSING_FIELD_ERROR.format(str(error)),
             "status_code": 400
-        })
-        response.status_code = 400
-        return response
+        }), 400
 
 
 def register_jwt_handlers(jwt):
@@ -66,7 +65,7 @@ def register_jwt_handlers(jwt):
         """Handles revoked tokens."""
         return jsonify({
             "error": "Unauthorized",
-            "message": "The token has been revoked.",
+            "message": TOKEN_REVOKED,
             "status_code": 401
         }), 401
 
@@ -75,7 +74,7 @@ def register_jwt_handlers(jwt):
         """Handles requests where a fresh token is required."""
         return jsonify({
             "error": "Unauthorized",
-            "message": "The token is not fresh. Please use a fresh token.",
+            "message": TOKEN_NOT_FRESH,
             "status_code": 401
         }), 401
 
@@ -84,7 +83,7 @@ def register_jwt_handlers(jwt):
         """Handles expired tokens."""
         return jsonify({
             "error": "Unauthorized",
-            "message": "The token has expired.",
+            "message": TOKEN_EXPIRED,
             "status_code": 401
         }), 401
 
@@ -93,7 +92,7 @@ def register_jwt_handlers(jwt):
         """Handles invalid tokens (wrong signature, tampered, etc.)."""
         return jsonify({
             "error": "Unauthorized",
-            "message": "Invalid token. Signature verification failed.",
+            "message": INVALID_TOKEN,
             "status_code": 401
         }), 401
 
@@ -102,6 +101,6 @@ def register_jwt_handlers(jwt):
         """Handles missing access tokens."""
         return jsonify({
             "error": "Unauthorized",
-            "message": "Request does not contain an access token.",
+            "message": MISSING_TOKEN,
             "status_code": 401
         }), 401

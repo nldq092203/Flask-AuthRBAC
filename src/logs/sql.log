@@ -23,3 +23,124 @@ WHERE users.username = ?
 FROM users 
 WHERE users.username = ? | Params: ('admin1',) | Execution Time: 0.00110s
 2025-02-19 16:15:40 | INFO | ROLLBACK
+2025-02-19 20:40:43 | INFO | BEGIN (implicit)
+2025-02-19 20:40:43 | INFO | SELECT roles.id, roles.name, roles."default", roles.permissions 
+FROM roles 
+WHERE roles."default" = 1
+ LIMIT ? OFFSET ?
+2025-02-19 20:40:43 | INFO | [generated in 0.00016s] (1, 0)
+2025-02-19 20:40:43 | INFO | SQL Query: SELECT roles.id, roles.name, roles."default", roles.permissions 
+FROM roles 
+WHERE roles."default" = 1
+ LIMIT ? OFFSET ? | Params: (1, 0) | Execution Time: 0.00077s
+2025-02-19 20:40:43 | INFO | INSERT INTO users (username, _password, email, is_active) VALUES (?, ?, ?, ?)
+2025-02-19 20:40:43 | INFO | [generated in 0.00019s] ('test4', '$pbkdf2-sha256$29000$eA.hdC5ljBFCKOW8l5IyBg$cZyeL64i0K3Rek3/k2akZqvmLBgCGIPBDIbx8yGTYqQ', 'test4@gmail.com', 0)
+2025-02-19 20:40:43 | INFO | SQL Query: INSERT INTO users (username, _password, email, is_active) VALUES (?, ?, ?, ?) | Params: ('test4', '$pbkdf2-sha256$29000$eA.hdC5ljBFCKOW8l5IyBg$cZyeL64i0K3Rek3/k2akZqvmLBgCGIPBDIbx8yGTYqQ', 'test4@gmail.com', 0) | Execution Time: 0.00064s
+2025-02-19 20:40:43 | INFO | INSERT INTO roles_users (role_id, user_id) VALUES (?, ?)
+2025-02-19 20:40:43 | INFO | [generated in 0.00006s] (1, 6)
+2025-02-19 20:40:43 | INFO | SQL Query: INSERT INTO roles_users (role_id, user_id) VALUES (?, ?) | Params: (1, 6) | Execution Time: 0.00009s
+2025-02-19 20:40:43 | INFO | COMMIT
+2025-02-19 20:40:43 | INFO | BEGIN (implicit)
+2025-02-19 20:40:43 | INFO | SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ?
+2025-02-19 20:40:43 | INFO | [generated in 0.00007s] (6,)
+2025-02-19 20:40:43 | INFO | SQL Query: SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ? | Params: (6,) | Execution Time: 0.00013s
+2025-02-19 20:40:43 | INFO | SELECT roles.id AS roles_id, roles.name AS roles_name, roles."default" AS roles_default, roles.permissions AS roles_permissions 
+FROM roles, roles_users 
+WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id
+2025-02-19 20:40:43 | INFO | [generated in 0.00017s] (6,)
+2025-02-19 20:40:43 | INFO | SQL Query: SELECT roles.id AS roles_id, roles.name AS roles_name, roles."default" AS roles_default, roles.permissions AS roles_permissions 
+FROM roles, roles_users 
+WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id | Params: (6,) | Execution Time: 0.00027s
+2025-02-19 20:40:43 | INFO | ROLLBACK
+2025-02-19 20:41:01 | INFO | BEGIN (implicit)
+2025-02-19 20:41:01 | INFO | SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.email = ?
+2025-02-19 20:41:01 | INFO | [generated in 0.00018s] ('test4@gmail.com',)
+2025-02-19 20:41:01 | INFO | SQL Query: SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.email = ? | Params: ('test4@gmail.com',) | Execution Time: 0.00042s
+2025-02-19 20:41:01 | INFO | UPDATE users SET is_active=? WHERE users.id = ?
+2025-02-19 20:41:01 | INFO | [generated in 0.00010s] (1, 6)
+2025-02-19 20:41:01 | INFO | SQL Query: UPDATE users SET is_active=? WHERE users.id = ? | Params: (1, 6) | Execution Time: 0.00057s
+2025-02-19 20:41:01 | INFO | COMMIT
+2025-02-19 20:41:18 | INFO | BEGIN (implicit)
+2025-02-19 20:41:18 | INFO | SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.username = ?
+2025-02-19 20:41:18 | INFO | [generated in 0.00016s] ('test4',)
+2025-02-19 20:41:18 | INFO | SQL Query: SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.username = ? | Params: ('test4',) | Execution Time: 0.00025s
+2025-02-19 20:41:18 | INFO | ROLLBACK
+2025-02-19 20:41:43 | INFO | BEGIN (implicit)
+2025-02-19 20:41:43 | INFO | SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.username = ?
+2025-02-19 20:41:43 | INFO | [cached since 24.68s ago] ('test4',)
+2025-02-19 20:41:43 | INFO | SQL Query: SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.username = ? | Params: ('test4',) | Execution Time: 0.00020s
+2025-02-19 20:41:43 | INFO | SELECT roles.id AS roles_id, roles.name AS roles_name, roles."default" AS roles_default, roles.permissions AS roles_permissions 
+FROM roles, roles_users 
+WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id
+2025-02-19 20:41:43 | INFO | [cached since 60.17s ago] (6,)
+2025-02-19 20:41:43 | INFO | SQL Query: SELECT roles.id AS roles_id, roles.name AS roles_name, roles."default" AS roles_default, roles.permissions AS roles_permissions 
+FROM roles, roles_users 
+WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id | Params: (6,) | Execution Time: 0.00013s
+2025-02-19 20:41:43 | INFO | ROLLBACK
+2025-02-19 20:42:04 | INFO | BEGIN (implicit)
+2025-02-19 20:42:04 | INFO | SELECT blacklisted_tokens.id, blacklisted_tokens.jti, blacklisted_tokens.created_at 
+FROM blacklisted_tokens 
+WHERE blacklisted_tokens.jti = ?
+2025-02-19 20:42:04 | INFO | [generated in 0.00029s] ('bf4bb2b4-0aea-4178-831e-4188770ac62f',)
+2025-02-19 20:42:04 | INFO | SQL Query: SELECT blacklisted_tokens.id, blacklisted_tokens.jti, blacklisted_tokens.created_at 
+FROM blacklisted_tokens 
+WHERE blacklisted_tokens.jti = ? | Params: ('bf4bb2b4-0aea-4178-831e-4188770ac62f',) | Execution Time: 0.00115s
+2025-02-19 20:42:04 | INFO | SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ?
+2025-02-19 20:42:04 | INFO | [generated in 0.00017s] ('6',)
+2025-02-19 20:42:04 | INFO | SQL Query: SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ? | Params: ('6',) | Execution Time: 0.00020s
+2025-02-19 20:42:04 | INFO | SELECT roles.id AS roles_id, roles.name AS roles_name, roles."default" AS roles_default, roles.permissions AS roles_permissions 
+FROM roles, roles_users 
+WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id
+2025-02-19 20:42:04 | INFO | [cached since 81.47s ago] (6,)
+2025-02-19 20:42:04 | INFO | SQL Query: SELECT roles.id AS roles_id, roles.name AS roles_name, roles."default" AS roles_default, roles.permissions AS roles_permissions 
+FROM roles, roles_users 
+WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id | Params: (6,) | Execution Time: 0.00010s
+2025-02-19 20:42:04 | INFO | ROLLBACK
+2025-02-19 20:42:33 | INFO | BEGIN (implicit)
+2025-02-19 20:42:33 | INFO | SELECT blacklisted_tokens.id, blacklisted_tokens.jti, blacklisted_tokens.created_at 
+FROM blacklisted_tokens 
+WHERE blacklisted_tokens.jti = ?
+2025-02-19 20:42:33 | INFO | [cached since 29.14s ago] ('165c2b4a-350c-4f3c-bb13-670af5ae9ab5',)
+2025-02-19 20:42:33 | INFO | SQL Query: SELECT blacklisted_tokens.id, blacklisted_tokens.jti, blacklisted_tokens.created_at 
+FROM blacklisted_tokens 
+WHERE blacklisted_tokens.jti = ? | Params: ('165c2b4a-350c-4f3c-bb13-670af5ae9ab5',) | Execution Time: 0.00040s
+2025-02-19 20:42:33 | INFO | SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ?
+2025-02-19 20:42:33 | INFO | [cached since 29.14s ago] ('6',)
+2025-02-19 20:42:33 | INFO | SQL Query: SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ? | Params: ('6',) | Execution Time: 0.00016s
+2025-02-19 20:42:33 | INFO | UPDATE users SET _password=? WHERE users.id = ?
+2025-02-19 20:42:33 | INFO | [generated in 0.00016s] ('$pbkdf2-sha256$29000$JkRojXHOWWtNiRGiVIpRyg$Z.guNUVi7JjD7eMFqStrA9/X/CdZdx/9JwLOSRLOfZ0', 6)
+2025-02-19 20:42:33 | INFO | SQL Query: UPDATE users SET _password=? WHERE users.id = ? | Params: ('$pbkdf2-sha256$29000$JkRojXHOWWtNiRGiVIpRyg$Z.guNUVi7JjD7eMFqStrA9/X/CdZdx/9JwLOSRLOfZ0', 6) | Execution Time: 0.00107s
+2025-02-19 20:42:33 | INFO | COMMIT
+2025-02-19 20:42:33 | INFO | BEGIN (implicit)
+2025-02-19 20:42:33 | INFO | SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ?
+2025-02-19 20:42:33 | INFO | [cached since 110.7s ago] (6,)
+2025-02-19 20:42:33 | INFO | SQL Query: SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ? | Params: (6,) | Execution Time: 0.00008s
+2025-02-19 20:42:33 | INFO | ROLLBACK
