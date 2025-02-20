@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask_smorest import Blueprint
 
 from src.modules.auth.resources import blp as auth_blp
 # from src.modules.user.resources import blp as user_blp
