@@ -5,8 +5,7 @@ It automatically creates an admin user with **hardcoded credentials**.
 Instead, use the `flask createadmin` command for secure admin creation.
 """
 from src.extensions import db
-from src.models.user import UserModel
-from src.modules.auth.models import RoleModel
+from src.modules.auth.models import RoleModel, UserModel
 
 def create_admin():
     """Creates an initial admin user if it does not exist."""
