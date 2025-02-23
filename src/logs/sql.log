@@ -267,3 +267,31 @@ WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id
 FROM roles, roles_users 
 WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id | Params: (2,) | Execution Time: 0.00016s
 2025-02-23 02:54:33 | INFO | ROLLBACK
+2025-02-23 03:02:04 | INFO | BEGIN (implicit)
+2025-02-23 03:02:04 | INFO | SELECT blacklisted_tokens.id, blacklisted_tokens.jti, blacklisted_tokens.created_at 
+FROM blacklisted_tokens 
+WHERE blacklisted_tokens.jti = ?
+2025-02-23 03:02:04 | INFO | [generated in 0.00014s] ('05e15d98-11c3-474e-a7b4-7538181add65',)
+2025-02-23 03:02:04 | INFO | SQL Query: SELECT blacklisted_tokens.id, blacklisted_tokens.jti, blacklisted_tokens.created_at 
+FROM blacklisted_tokens 
+WHERE blacklisted_tokens.jti = ? | Params: ('05e15d98-11c3-474e-a7b4-7538181add65',) | Execution Time: 0.00082s
+2025-02-23 03:02:04 | INFO | SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ?
+2025-02-23 03:02:04 | INFO | [generated in 0.00012s] ('2',)
+2025-02-23 03:02:04 | INFO | SQL Query: SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ? | Params: ('2',) | Execution Time: 0.00037s
+2025-02-23 03:02:04 | INFO | UPDATE users SET _password=? WHERE users.id = ?
+2025-02-23 03:02:04 | INFO | [generated in 0.00016s] ('$pbkdf2-sha256$29000$CGGsFUIIoVTqfc/Zu3fOOQ$d9ADVTnJctpCH.DYdivDs06BSIupyn7jHfzZb0/VaA0', 2)
+2025-02-23 03:02:04 | INFO | SQL Query: UPDATE users SET _password=? WHERE users.id = ? | Params: ('$pbkdf2-sha256$29000$CGGsFUIIoVTqfc/Zu3fOOQ$d9ADVTnJctpCH.DYdivDs06BSIupyn7jHfzZb0/VaA0', 2) | Execution Time: 0.00059s
+2025-02-23 03:02:04 | INFO | COMMIT
+2025-02-23 03:02:04 | INFO | BEGIN (implicit)
+2025-02-23 03:02:04 | INFO | SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ?
+2025-02-23 03:02:04 | INFO | [generated in 0.00009s] (2,)
+2025-02-23 03:02:04 | INFO | SQL Query: SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ? | Params: (2,) | Execution Time: 0.00009s
+2025-02-23 03:02:04 | INFO | ROLLBACK

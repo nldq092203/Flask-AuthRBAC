@@ -1,2 +1,4 @@
 2025-02-23 02:54:33 INFO resources post Login attempt for username: test
 2025-02-23 02:54:33 INFO resources post Login successful for user: test
+2025-02-23 03:02:04 INFO resources post Password change attempt
+2025-02-23 03:02:04 INFO resources post User test changed their password.
