@@ -22,3 +22,6 @@ class DevelopmentConfig(BaseConfig):
 
     SECRET_KEY = "lnguye01"
     SECURITY_PASSWORD_SALT = "e5f2c7b3a8d9e1f442d6a1c2b5e4f7a9"
+
+    #Cookie
+    COOKIE_SECURE = False

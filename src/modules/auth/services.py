@@ -1,4 +1,3 @@
-from password_validator import PasswordValidator
 from itsdangerous import URLSafeTimedSerializer
 from flask import current_app
 from flask_mail import Message
@@ -12,26 +11,18 @@ from sqlalchemy import select
 
 from passlib.hash import pbkdf2_sha256
 
+from marshmallow import ValidationError
+
 def hash_password(raw_password: str) -> str:
     return pbkdf2_sha256.hash(raw_password)
 
 def verify_password(raw_password: str, hashed_password: str) -> bool:
     return pbkdf2_sha256.verify(raw_password, hashed_password)
 
-
-password_schema = PasswordValidator()
-password_schema \
-    .min(8) \
-    .max(128) \
-    .has().uppercase() \
-    .has().lowercase() \
-    .has().digits() \
-    .has().symbols() \
-
-def validate_password(password):
-    if not password_schema.validate(password):
-        raise ValueError("Password must be 8-128 characters long, contain uppercase, lowercase, a digit and a symbol.")
-
+def validate_password_match(data, password_field="password", confirm_field="confirm_password"):
+    if data.get(password_field) != data.get(confirm_field):
+        raise ValidationError({confirm_field: "Passwords do not match."})
+    
 def generate_activation_token(email):
     """Generate a secure activation token."""
     serializer = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])

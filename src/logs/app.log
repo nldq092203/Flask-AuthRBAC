@@ -1,4 +1,12 @@
-2025-02-23 02:54:33 INFO resources post Login attempt for username: test
-2025-02-23 02:54:33 INFO resources post Login successful for user: test
-2025-02-23 03:02:04 INFO resources post Password change attempt
-2025-02-23 03:02:04 INFO resources post User test changed their password.
+2025-03-28 11:51:48 INFO resources post Login attempt for username: admin
+2025-03-28 11:51:48 WARNING resources post Login failed for username: admin
+2025-03-28 11:52:12 INFO resources post Login attempt for username: admin
+2025-03-28 11:52:12 WARNING resources post Login failed for username: admin
+2025-03-28 12:03:25 INFO resources post Login attempt for username: admin
+2025-03-28 12:03:26 INFO resources post Login successful for user: admin
+2025-03-28 12:21:01 INFO resources post Login attempt for username: admin
+2025-03-28 12:21:01 INFO resources post Login successful for user: admin
+2025-03-28 15:36:24 INFO resources post User registration attempt: user
+2025-03-28 15:36:24 INFO resources post User created successfully: user
+2025-03-28 17:17:22 INFO resources post User registration attempt: user1
+2025-03-28 17:17:22 INFO resources post User created successfully: user1

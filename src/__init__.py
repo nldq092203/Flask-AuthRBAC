@@ -2,7 +2,7 @@ import os
 
 from flask import Flask
 from flask_smorest import Api
-from src.extensions import db, jwt, mail
+from src.extensions import db, jwt, mail, cors
 from flask_migrate import Migrate
 
 from src.config import get_config
@@ -31,6 +31,12 @@ def create_app(config=None):
     db.init_app(app)
     migrate = Migrate(app, db)
     api = Api(app)
+
+    cors.init_app(app, resources={
+        r"/api/*": {
+            "origins": ["http://localhost:5173"]
+        }
+    }, supports_credentials=True)
 
     jwt.init_app(app)
 
