@@ -4,7 +4,7 @@ from src.modules.auth.services import is_token_blacklisted
 from src.constants.messages import *
 from src.constants.errors import *
 from src.common.response_builder import ResponseBuilder
-
+from flask_limiter.errors import RateLimitExceeded
 def register_error_handlers(app):
     @app.errorhandler(UnprocessableEntity)
     def handle_validation_error(e):
@@ -102,3 +102,13 @@ def register_jwt_handlers(jwt):
             message=MISSING_TOKEN,
             status_code=401
         )
+
+def register_limiter_handlers(limiter):
+    def rate_limit_error_handler(error: RateLimitExceeded):
+        return ResponseBuilder().error(
+            error="Too Many Requests",
+            message=TOO_MANY_REQUEST,
+            status_code=429
+        )
+
+    limiter.on_error = rate_limit_error_handler

@@ -69,7 +69,7 @@ def send_activation_email(user_email):
 def send_password_reset_email(user_email):
     """Send a password reset email."""
     reset_token = generate_activation_token(user_email)
-    
+
     scheme = get_scheme()
     server_name = get_server_name()    
     

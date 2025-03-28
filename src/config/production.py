@@ -10,4 +10,3 @@ class ProductionConfig(BaseConfig):
     def SQLALCHEMY_DATABASE_URI(self):
         return os.getenv("DATABASE_URL", "postgresql://user:password@host/db")
     
-    COOKIE_SECURE = True

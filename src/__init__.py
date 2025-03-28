@@ -2,16 +2,17 @@ import os
 
 from flask import Flask
 from flask_smorest import Api
-from src.extensions import db, jwt, mail, cors
+from src.extensions import db, jwt, mail, cors, limiter, init_celery
 from flask_migrate import Migrate
 
 from src.config import get_config
 from src.config.logging import configure_logger, configure_sql_logger
 
 from src.commands import register_commands
-from src.common.error_handlers import register_error_handlers, register_jwt_handlers
+from src.common.error_handlers import register_error_handlers, register_jwt_handlers, register_limiter_handlers
 
 from src.modules.api import api_blp
+import src.modules.auth.signals # Important !!!
 
 def create_app(config=None):
     app = Flask(__name__)
@@ -38,13 +39,17 @@ def create_app(config=None):
         }
     }, supports_credentials=True)
 
+    limiter.init_app(app)
+
     jwt.init_app(app)
 
     # Initialize Flask-Mail 
     mail.init_app(app)
-
+    # Celery
+    init_celery(app)
     # Register CLI commands
     register_commands(app)
+    register_limiter_handlers(limiter)
     register_error_handlers(app)
     register_jwt_handlers(jwt)
 

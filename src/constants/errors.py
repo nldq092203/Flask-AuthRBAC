@@ -5,7 +5,6 @@ INVALID_TOKEN = "Invalid token. Signature verification failed."
 TOKEN_REVOKED = "The token has been revoked."
 MISSING_TOKEN = "Request does not contain an access token."
 
-
 # Authentication Errors
 USER_NOT_FOUND = "User not found."
 USER_ALREADY_EXISTS = "A user with that username already exists."
@@ -28,3 +27,6 @@ INTERNAL_SERVER_ERROR = "An unexpected error occurred. Please try again later."
 BAD_REQUEST = "Invalid request parameters."
 PERMISSION_DENIED = "Permission denied. Missing required roles."
 NO_DEFAULT_ROLE = "Internal error: No default role assigned."
+
+# Limiter Errors
+TOO_MANY_REQUEST = "You are sending requests too quickly. Please wait before trying again."

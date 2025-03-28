@@ -20,8 +20,13 @@ class BaseConfig(ABC):
         pass
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+
+    PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))  
+
+    ORIGINAL_FILE_PATH = f"{PROJECT_PATH}/uploads/original_files/6335f2d9fa1e4047.csv"
+
     # API Documentation (OpenAPI / Swagger)
-    API_TITLE = "Skeleton Authentication and RBAC"
+    API_TITLE = "Flask Auth RBAC Skeleton"
     API_VERSION = "v1"
     OPENAPI_VERSION = "3.0.3"
     OPENAPI_URL_PREFIX = "/"
@@ -30,10 +35,14 @@ class BaseConfig(ABC):
     
     SEED_ADMIN = False
     # LOG_DIR = ""
-    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "lnguye01")
 
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "lnguye01")
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=60)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
-
     JWT_BLACKLIST_ENABLED = True  # Enable token revocation
     JWT_BLACKLIST_TOKEN_CHECKS = ["access", "refresh"] 
+
+    # Celery Worker
+    CELERY_BROKER_URL = "redis://redis:6379/0"
+    CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+    

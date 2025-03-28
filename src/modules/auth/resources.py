@@ -1,8 +1,7 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from flask import current_app, jsonify
-
-from src.extensions import db
+from flask import current_app
+from src.extensions import db, limiter
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from src.modules.auth.schemas import UserRegisterSchema, ChangePasswordSchema, ResetPasswordSchema, SendEmailSchema, UserLoginSchema
@@ -109,7 +108,6 @@ class UserRegister(MethodView):
         user = UserModel(username=user_data["username"], email=user_data["email"], is_active=False)
         user.password = user_data["password"]
         user.roles.append(default_role)
-        user.is_active = True
 
         try:
             db.session.add(user)
@@ -155,6 +153,7 @@ class UserActivateAccount(MethodView):
         abort(HTTPStatus.BAD_REQUEST, message=INVALID_OR_EXPIRED_TOKEN)
 
 @blp.route("/resend_activation")
+@limiter.limit("1 per 2 minutes")
 class UserResendActivateAccount(MethodView):
     @blp.arguments(SendEmailSchema)
     def post(self, user_data):
