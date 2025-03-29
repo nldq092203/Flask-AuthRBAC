@@ -1,6 +1,9 @@
 import os
 from abc import ABC, abstractmethod
 from datetime import timedelta
+from dotenv import load_dotenv
+
+load_dotenv()  
 class BaseConfig(ABC):
     """Base configuration with default settings shared across environments."""
 
@@ -46,3 +49,4 @@ class BaseConfig(ABC):
     CELERY_BROKER_URL = "redis://redis:6379/0"
     CELERY_RESULT_BACKEND = "redis://redis:6379/0"
     
+    FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")

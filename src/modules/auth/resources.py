@@ -152,11 +152,11 @@ class UserActivateAccount(MethodView):
             abort(HTTPStatus.NOT_FOUND, message=USER_NOT_FOUND)
         abort(HTTPStatus.BAD_REQUEST, message=INVALID_OR_EXPIRED_TOKEN)
 
-@blp.route("/resend_activation")
 @limiter.limit("1 per 2 minutes")
+@blp.route("/resend_activation")
 class UserResendActivateAccount(MethodView):
     @blp.arguments(SendEmailSchema)
-    def post(self, user_data):
+    def post(self, user_data): 
         stm = select(UserModel).where(UserModel.email == user_data["email"])
         user = db.session.execute(stm).scalars().first()
 

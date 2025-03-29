@@ -1321,3 +1321,142 @@ WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id
 FROM roles, roles_users 
 WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id | Params: (15,) | Execution Time: 0.00066s
 2025-03-28 21:43:56 | INFO | ROLLBACK
+2025-03-29 00:36:09 | INFO | BEGIN (implicit)
+2025-03-29 00:36:09 | INFO | SELECT roles.id, roles.name, roles."default", roles.permissions 
+FROM roles 
+WHERE roles."default" = 1
+ LIMIT ? OFFSET ?
+2025-03-29 00:36:09 | INFO | [cached since 8785s ago] (1, 0)
+2025-03-29 00:36:09 | INFO | SQL Query: SELECT roles.id, roles.name, roles."default", roles.permissions 
+FROM roles 
+WHERE roles."default" = 1
+ LIMIT ? OFFSET ? | Params: (1, 0) | Execution Time: 0.00151s
+2025-03-29 00:36:09 | INFO | INSERT INTO users (username, _password, email, is_active) VALUES (?, ?, ?, ?)
+2025-03-29 00:36:09 | INFO | [cached since 8785s ago] ('user4', '$pbkdf2-sha256$29000$v7f2HoNwjtEaI8S4l1KqlQ$fTZxf3mHAStXSNlYAFXgNlFC7ZEUsJmvwksLEmmXs.0', 'user4@gmail.com', 0)
+2025-03-29 00:36:09 | INFO | SQL Query: INSERT INTO users (username, _password, email, is_active) VALUES (?, ?, ?, ?) | Params: ('user4', '$pbkdf2-sha256$29000$v7f2HoNwjtEaI8S4l1KqlQ$fTZxf3mHAStXSNlYAFXgNlFC7ZEUsJmvwksLEmmXs.0', 'user4@gmail.com', 0) | Execution Time: 0.00239s
+2025-03-29 00:36:09 | INFO | INSERT INTO roles_users (role_id, user_id) VALUES (?, ?)
+2025-03-29 00:36:09 | INFO | [cached since 8785s ago] (1, 16)
+2025-03-29 00:36:09 | INFO | SQL Query: INSERT INTO roles_users (role_id, user_id) VALUES (?, ?) | Params: (1, 16) | Execution Time: 0.00065s
+2025-03-29 00:36:09 | INFO | COMMIT
+2025-03-29 00:36:09 | INFO | BEGIN (implicit)
+2025-03-29 00:36:09 | INFO | SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ?
+2025-03-29 00:36:09 | INFO | [cached since 8785s ago] (16,)
+2025-03-29 00:36:09 | INFO | SQL Query: SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ? | Params: (16,) | Execution Time: 0.00056s
+2025-03-29 00:36:09 | INFO | SELECT roles.id AS roles_id, roles.name AS roles_name, roles."default" AS roles_default, roles.permissions AS roles_permissions 
+FROM roles, roles_users 
+WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id
+2025-03-29 00:36:09 | INFO | [cached since 8785s ago] (16,)
+2025-03-29 00:36:09 | INFO | SQL Query: SELECT roles.id AS roles_id, roles.name AS roles_name, roles."default" AS roles_default, roles.permissions AS roles_permissions 
+FROM roles, roles_users 
+WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id | Params: (16,) | Execution Time: 0.00080s
+2025-03-29 00:36:09 | INFO | ROLLBACK
+2025-03-29 00:53:24 | INFO | BEGIN (implicit)
+2025-03-29 00:53:24 | INFO | SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.email = ?
+2025-03-29 00:53:24 | INFO | [generated in 0.00050s] ('user4@gmail.com',)
+2025-03-29 00:53:24 | INFO | SQL Query: SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.email = ? | Params: ('user4@gmail.com',) | Execution Time: 0.00119s
+2025-03-29 00:53:24 | INFO | ROLLBACK
+2025-03-29 01:01:46 | INFO | BEGIN (implicit)
+2025-03-29 01:01:46 | INFO | SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.email = ?
+2025-03-29 01:01:46 | INFO | [cached since 502s ago] ('user4@gmail.com',)
+2025-03-29 01:01:46 | INFO | SQL Query: SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.email = ? | Params: ('user4@gmail.com',) | Execution Time: 0.00181s
+2025-03-29 01:01:46 | INFO | UPDATE users SET is_active=? WHERE users.id = ?
+2025-03-29 01:01:46 | INFO | [generated in 0.00048s] (1, 16)
+2025-03-29 01:01:46 | INFO | SQL Query: UPDATE users SET is_active=? WHERE users.id = ? | Params: (1, 16) | Execution Time: 0.00200s
+2025-03-29 01:01:46 | INFO | COMMIT
+2025-03-29 01:01:46 | INFO | BEGIN (implicit)
+2025-03-29 01:01:46 | INFO | SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.email = ?
+2025-03-29 01:01:46 | INFO | [cached since 502.1s ago] ('user4@gmail.com',)
+2025-03-29 01:01:46 | INFO | SQL Query: SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.email = ? | Params: ('user4@gmail.com',) | Execution Time: 0.00043s
+2025-03-29 01:01:46 | INFO | COMMIT
+2025-03-29 01:07:38 | INFO | BEGIN (implicit)
+2025-03-29 01:07:38 | INFO | SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.email = ?
+2025-03-29 01:07:38 | INFO | [cached since 854.4s ago] ('user4@gmail.com',)
+2025-03-29 01:07:38 | INFO | SQL Query: SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.email = ? | Params: ('user4@gmail.com',) | Execution Time: 0.00359s
+2025-03-29 01:07:38 | INFO | COMMIT
+2025-03-29 01:07:38 | INFO | BEGIN (implicit)
+2025-03-29 01:07:38 | INFO | SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.email = ?
+2025-03-29 01:07:38 | INFO | [cached since 854.4s ago] ('user4@gmail.com',)
+2025-03-29 01:07:38 | INFO | SQL Query: SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.email = ? | Params: ('user4@gmail.com',) | Execution Time: 0.00037s
+2025-03-29 01:07:38 | INFO | COMMIT
+2025-03-29 01:08:24 | INFO | BEGIN (implicit)
+2025-03-29 01:08:24 | INFO | SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.username = ?
+2025-03-29 01:08:24 | INFO | [generated in 0.00045s] ('user4',)
+2025-03-29 01:08:24 | INFO | SQL Query: SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.username = ? | Params: ('user4',) | Execution Time: 0.00094s
+2025-03-29 01:08:24 | INFO | SELECT roles.id AS roles_id, roles.name AS roles_name, roles."default" AS roles_default, roles.permissions AS roles_permissions 
+FROM roles, roles_users 
+WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id
+2025-03-29 01:08:24 | INFO | [generated in 0.00027s] (16,)
+2025-03-29 01:08:24 | INFO | SQL Query: SELECT roles.id AS roles_id, roles.name AS roles_name, roles."default" AS roles_default, roles.permissions AS roles_permissions 
+FROM roles, roles_users 
+WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id | Params: (16,) | Execution Time: 0.00070s
+2025-03-29 01:08:24 | INFO | ROLLBACK
+2025-03-29 01:12:04 | INFO | BEGIN (implicit)
+2025-03-29 01:12:04 | INFO | SELECT roles.id, roles.name, roles."default", roles.permissions 
+FROM roles 
+WHERE roles."default" = 1
+ LIMIT ? OFFSET ?
+2025-03-29 01:12:04 | INFO | [generated in 0.00073s] (1, 0)
+2025-03-29 01:12:04 | INFO | SQL Query: SELECT roles.id, roles.name, roles."default", roles.permissions 
+FROM roles 
+WHERE roles."default" = 1
+ LIMIT ? OFFSET ? | Params: (1, 0) | Execution Time: 0.00142s
+2025-03-29 01:12:04 | INFO | INSERT INTO users (username, _password, email, is_active) VALUES (?, ?, ?, ?)
+2025-03-29 01:12:04 | INFO | [generated in 0.00034s] ('user5', '$pbkdf2-sha256$29000$4lzrXQsBAGBMKcV4D0HoHQ$KDl0hG2QRv4lembpCt/.GESkXcPI9KTtXKBfpuLSJEM', 'user5@gmail.com', 0)
+2025-03-29 01:12:04 | INFO | SQL Query: INSERT INTO users (username, _password, email, is_active) VALUES (?, ?, ?, ?) | Params: ('user5', '$pbkdf2-sha256$29000$4lzrXQsBAGBMKcV4D0HoHQ$KDl0hG2QRv4lembpCt/.GESkXcPI9KTtXKBfpuLSJEM', 'user5@gmail.com', 0) | Execution Time: 0.00206s
+2025-03-29 01:12:04 | INFO | INSERT INTO roles_users (role_id, user_id) VALUES (?, ?)
+2025-03-29 01:12:04 | INFO | [generated in 0.00037s] (1, 17)
+2025-03-29 01:12:04 | INFO | SQL Query: INSERT INTO roles_users (role_id, user_id) VALUES (?, ?) | Params: (1, 17) | Execution Time: 0.00082s
+2025-03-29 01:12:04 | INFO | COMMIT
+2025-03-29 01:12:04 | INFO | BEGIN (implicit)
+2025-03-29 01:12:04 | INFO | SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ?
+2025-03-29 01:12:04 | INFO | [generated in 0.00031s] (17,)
+2025-03-29 01:12:04 | INFO | SQL Query: SELECT users.id AS users_id, users.username AS users_username, users._password AS users__password, users.email AS users_email, users.is_active AS users_is_active 
+FROM users 
+WHERE users.id = ? | Params: (17,) | Execution Time: 0.00075s
+2025-03-29 01:12:04 | INFO | SELECT roles.id AS roles_id, roles.name AS roles_name, roles."default" AS roles_default, roles.permissions AS roles_permissions 
+FROM roles, roles_users 
+WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id
+2025-03-29 01:12:04 | INFO | [generated in 0.00025s] (17,)
+2025-03-29 01:12:04 | INFO | SQL Query: SELECT roles.id AS roles_id, roles.name AS roles_name, roles."default" AS roles_default, roles.permissions AS roles_permissions 
+FROM roles, roles_users 
+WHERE ? = roles_users.user_id AND roles.id = roles_users.role_id | Params: (17,) | Execution Time: 0.00059s
+2025-03-29 01:12:04 | INFO | ROLLBACK
+2025-03-29 01:12:09 | INFO | BEGIN (implicit)
+2025-03-29 01:12:09 | INFO | SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.email = ?
+2025-03-29 01:12:09 | INFO | [generated in 0.00033s] ('user5@gmail.com',)
+2025-03-29 01:12:09 | INFO | SQL Query: SELECT users.id, users.username, users._password, users.email, users.is_active 
+FROM users 
+WHERE users.email = ? | Params: ('user5@gmail.com',) | Execution Time: 0.00067s
+2025-03-29 01:12:09 | INFO | ROLLBACK

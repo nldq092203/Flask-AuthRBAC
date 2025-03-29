@@ -48,11 +48,10 @@ def send_activation_email(user_email):
     """Send an account activation email."""
     activation_token = generate_activation_token(user_email)
     
-    scheme = get_scheme()
-    server_name = get_server_name()
+    frontend_base_url = current_app.config["FRONTEND_URL"]
     
-    # Direct backend API endpoint for activation
-    activation_link = f"{scheme}://{server_name}/api/auth/activation/{activation_token}"
+    # Direct Frontend endpoint for activation
+    activation_link = f"{frontend_base_url}/email/activate?token={activation_token}"
 
     msg = Message(
         subject="Activate Your Account",
